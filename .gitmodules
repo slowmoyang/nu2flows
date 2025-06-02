@@ -1,3 +1,4 @@
 [submodule "mltools"]
 	path = mltools
-	url = https://mleigh:glpat-yrsHi28ZgUbwmX9rPoGX@gitlab.cern.ch/mleigh/mltools.git
+	url = https://github.com/slowmoyang/nu2flows_mltools.git
+	branch = temp-fix
