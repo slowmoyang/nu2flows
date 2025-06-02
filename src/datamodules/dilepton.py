@@ -149,9 +149,9 @@ class H5DataModule(LightningDataModule):
         self,
         *,
         train_conf: Mapping,
+        valid_conf: Mapping,
         test_conf: Mapping,
         loader_conf: Mapping,
-        val_frac: float = 0.1,
     ) -> None:
         """The datamodule for providing dilepton information.
 
@@ -176,9 +176,8 @@ class H5DataModule(LightningDataModule):
 
     def setup(self, stage: str) -> None:
         if stage in {"fit", "validate"}:
-            self.dataset = H5Dataset(**self.hparams.train_conf)
-            # self.dataset.plot_variables("plots")
-            self.train_set, self.valid_set = train_valid_split(self.dataset, self.hparams.val_frac)
+            self.train_set = H5Dataset(**self.hparams.train_conf)
+            self.valid_set = H5Dataset(**self.hparams.valid_conf)
             self.n_train_samples = len(self.train_set)
             self.n_valid_samples = len(self.valid_set)
 
@@ -193,6 +192,14 @@ class H5DataModule(LightningDataModule):
     def target_dimensions(self) -> tuple:
         """Return the typical dimensions of the target sample."""
         return self.miniset.get_target_dims()
+
+    @property
+    def model_kwargs(self):
+        return dict(
+            input_dimensions=self.input_dimensions(),
+            target_dimensions=self.target_dimensions(),
+        )
+
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(self.train_set, **self.hparams.loader_conf, shuffle=True)

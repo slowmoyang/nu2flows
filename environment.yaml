@@ -1,0 +1,37 @@
+name: nu2flows-py310
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch-gpu
+  - torchmetrics
+  - lightning
+  - wandb
+  - onnx
+  - onnxruntime
+  - packaging
+  - ninja
+  - flash-attn
+  - omegaconf
+  - hydra-core
+  - hydra-colorlog
+  - matplotlib=3.7.0
+  - seaborn
+  - plotly
+  - numpy
+  - scipy
+  - scikit-hep
+  - scikit-learn
+  - h5py
+  - ruff
+  - tqdm
+  - pylint
+  - dotmap
+  - rootutils
+  - pre-commit
+  - rich
+  - pytest
+  - pip
+  - pip:
+    - pykeops
+    - git+https://github.com/VincentStimper/normalizing-flows.git

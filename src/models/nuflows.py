@@ -140,7 +140,8 @@ class NuFlows(LightningModule):
             outputs = outputs[..., dim:]
         return output_dict
 
-    @T.cuda.amp.custom_fwd(cast_inputs=T.float32)  # , device_type="cuda")
+    # @T.cuda.amp.custom_fwd(cast_inputs=T.float32)  # , device_type="cuda")
+    @T.amp.custom_fwd(device_type="cuda", cast_inputs=T.float32)
     def _get_log_probs(
         self,
         targets: T.Tensor,
@@ -158,7 +159,8 @@ class NuFlows(LightningModule):
     def _shared_step(self, sample: tuple, flag: str) -> T.Tensor:
         """Shared step for training and validation."""
         # Unpack the sample
-        inputs, targets, _weights = sample
+        # inputs, targets, _weights = sample
+        inputs, targets = sample
 
         # Get the context and the flattened targets
         ctxt = self.get_context(inputs)
