@@ -67,3 +67,37 @@ We provide 3 executable scripts
 3) `plot.py`
     - Loads the test set data and a model's exported neutrinos.
     - More can be done here but by default we simply plot the model and truth neutrino energy as well as the reconstructed top mass.
+
+
+
+## Caveat
+- nu2flows use the `flash-attn` package, which requires Ampere GPUs or newer (>= NVIDIA 3000 series) 😵
+- nu2flows use the `wandb` package, which requires an account on `https://wandb.ai/` to log training runs
+
+
+## Recipies
+
+### Cloning the repository including the `mltools` submodule
+```bash
+git clone --recurse-submodules https://github.com/slowmoyang/nu2flows.git
+cd ./nu2flows
+```
+
+### Installing the required python dependencies using conda
+```bash
+conda create -y -f environment.yaml
+```
+or
+```bash
+micromamba create -y -f environment.yaml
+```
+
+### Activate the conda environment
+```bash
+conda activate nu2flows-py310
+```
+
+### Running the training script
+```bash
+python ./scripts/train.py
+```
