@@ -85,7 +85,7 @@ cd ./nu2flows
 
 ### Installing the required python dependencies using conda
 ```bash
-conda create -y -f environment.yaml
+conda env create -y -f environment.yaml
 ```
 or
 ```bash
