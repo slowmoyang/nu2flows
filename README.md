@@ -99,5 +99,10 @@ conda activate nu2flows-py310
 
 ### Running the training script
 ```bash
-python ./scripts/train.py
+python ./scripts/train.py network_name=nb-ge-2
+```
+
+### Running the inference script
+```bash
+python scripts/export.py network_name=nb-ge-2 samples_per_event=1024
 ```
