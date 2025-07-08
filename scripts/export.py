@@ -13,6 +13,8 @@ from omegaconf import DictConfig
 
 from mltools.mltools.hydra_utils import reload_original_config
 from mltools.mltools.torch_utils import to_np
+from models.nuflows import NuFlows
+
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +27,10 @@ def main(cfg: DictConfig) -> None:
     log.info("Loading best checkpoint")
     device = T.device("cuda" if T.cuda.is_available() else "cpu")
     model_class = hydra.utils.get_class(orig_cfg.model._target_)
-    model = model_class.load_from_checkpoint(orig_cfg.ckpt_path, map_location=device)
+    model: NuFlows = model_class.load_from_checkpoint(orig_cfg.ckpt_path, map_location=device)
+    model.samples_per_event = cfg.samples_per_event
+    log.info(f'{cfg.samples_per_event=}')
+    log.info(f'{model.samples_per_event=}')
 
     # Switch settings for the export
     orig_cfg.datamodule.loader_conf.batch_size = cfg.batch_size
@@ -49,10 +54,14 @@ def main(cfg: DictConfig) -> None:
         if outs[0].ndim == 1:
             outs = [o.unsqueeze(1) for o in outs]
         comb_dict[k] = T.vstack(outs)
+        log.debug(f'{k}: {comb_dict[k].shape}')
 
     log.info("Saving Outputs")
-    Path("outputs").mkdir(exist_ok=True, parents=True)
-    with h5py.File("outputs/test.h5", "w") as file:
+    output_dir_path = Path("outputs")
+    output_dir_path.mkdir(exist_ok=True, parents=True)
+    output_file_path = output_dir_path / f"test-{model.samples_per_event}.h5"
+    log.info(f"Saving to {output_file_path}")
+    with h5py.File(output_file_path, "w") as file:
         for key, v in comb_dict.items():
             file.create_dataset(key, data=to_np(v))
 

@@ -30,6 +30,7 @@ class NuFlows(LightningModule):
         scheduler: partial,
         optimizer: partial,
         gen_validation: int = 0,
+        samples_per_event: int | None = None,
     ) -> None:
         """Parameters
         ----------
@@ -81,6 +82,8 @@ class NuFlows(LightningModule):
             ctxt_dim=self.transformer.outp_dim,
             **flow_config,
         )
+
+        self.samples_per_event = samples_per_event
 
     def get_context(self, inputs: dict) -> T.Tensor:
         """Pass the inputs through the transformer context extractor.
@@ -181,13 +184,16 @@ class NuFlows(LightningModule):
 
         # Repeat the context for how many samples per event
         # Commenting out the behaviour for multiple samples per event
-        # ctxt = ctxt.repeat_interleave(samples_per_event, dim=0)
+
+        if self.samples_per_event is not None:
+            ctxt = ctxt.repeat_interleave(self.samples_per_event, dim=0)
 
         # Sample from the flow, undo normalisation and reshape
         sampled, log_probs = self.flow.sample(ctxt.shape[0], ctxt)
         sampled = self.target_norm.reverse(sampled)
-        # sampled = sampled.view(-1, samples_per_event, sampled.shape[-1])
-        # log_probs = log_probs.view(-1, samples_per_event)
+        if self.samples_per_event is not None:
+            sampled = sampled.view(-1, self.samples_per_event, sampled.shape[-1])
+            log_probs = log_probs.view(-1, self.samples_per_event)
 
         # Pack the targets into a dict and return
         out_dict = self.pack_outputs(sampled)

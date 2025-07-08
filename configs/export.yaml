@@ -8,3 +8,4 @@ defaults:
 project_name: nu2flows
 network_name: test
 batch_size: 1024
+samples_per_event: 1024
