@@ -1,0 +1,60 @@
+# NOTE: https://arxiv.org/pdf/2307.02405
+
+_target_: src.models.nuflows.NuFlows
+
+gen_validation: 10
+
+embed_config:
+  hddn_dim: 256
+  num_blocks: 1
+  act_h: LeakyReLU # Paper: "All MLPs... use LeakyReLU"
+
+transformer_config:
+  inpt_dim: 128
+  outp_dim: 128
+  do_packed: True
+  encoder_config:
+    dim: 128
+    num_layers: 3      # Paper: "three transformer encoder blocks"
+    num_registers: 2
+    layer_config:
+      num_heads: 16    # Paper: "16 attention heads"
+      #layerscale_init: 0.1
+  classattention_config:
+    dim: 128
+    num_layers: 2      # Paper: "two cross-attention blocks"
+    do_final_norm: True
+    layer_config:
+      num_heads: 16    # Paper: "16 attention heads"
+      #layerscale_init: null # Don't layerscale a cross attention block!
+
+flow_config:
+  num_stacks: 10       # Paper: "10 rational quadratic spline (RQS) coupling blocks"
+  mlp_width: 256       # Paper: "single hidden layer with 256 neurons"
+  mlp_depth: 2         # Matches "single hidden layer" (Input -> Hidden -> Output)
+  mlp_act: LeakyReLU   # Paper: "All MLPs... use LeakyReLU"
+  tail_bound: 4.0      # Paper: "linear tail bounds outside +/- 4"
+  tanh_prescale: 0.5
+  dropout: 0
+  num_bins: 10         # Paper: "Each RQS has 10 bins"
+  flow_type: coupling
+  base_dist: normal    # Paper: "standard multivariate normal distribution"
+  do_lu: True          # Paper: "interspersed with LU-decomposed linear layers"
+  init_identity: True
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 1.0e-3           # Paper: Cycles up to 10^-3
+  weight_decay: 1.0e-4 # Paper: "weight decay with a strength of 10^-4"
+
+scheduler:
+  _target_: mltools.mltools.lightning_utils.linear_warmup_cosine_decay
+  _partial_: true
+  # Note: The paper describes a Cyclic LR (10^-8 to 10^-3 every 50 epochs).
+  # You may need to adjust the scheduler target or steps below to match that behavior exactly,
+  # but this config aligns the architecture and static optimizer params.
+  total_steps: null
+  warmup_steps: 10_000
+  init_factor: 1.0e-5
+  final_factor: 1.0e-5
