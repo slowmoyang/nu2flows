@@ -38,7 +38,7 @@ flow_config:
   dropout: 0
   num_bins: 10         # Paper: "Each RQS has 10 bins"
   flow_type: coupling
-  base_dist: normal    # Paper: "standard multivariate normal distribution"
+  base_dist: gaussian    # Paper: "standard multivariate normal distribution"
   do_lu: True          # Paper: "interspersed with LU-decomposed linear layers"
   init_identity: True
 
