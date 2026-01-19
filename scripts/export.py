@@ -27,7 +27,7 @@ def main(cfg: DictConfig) -> None:
     log.info("Loading best checkpoint")
     device = T.device("cuda" if T.cuda.is_available() else "cpu")
     model_class = hydra.utils.get_class(orig_cfg.model._target_)
-    model: NuFlows = model_class.load_from_checkpoint(orig_cfg.ckpt_path, map_location=device)
+    model: NuFlows = model_class.load_from_checkpoint(orig_cfg.ckpt_path, map_location=device, weights_only=False)
     model.samples_per_event = cfg.samples_per_event
     log.info(f'{cfg.samples_per_event=}')
     log.info(f'{model.samples_per_event=}')
