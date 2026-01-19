@@ -13,7 +13,7 @@ from omegaconf import DictConfig
 
 from mltools.mltools.hydra_utils import reload_original_config
 from mltools.mltools.torch_utils import to_np
-from models.nuflows import NuFlows
+from src.models.nuflows import NuFlows
 
 
 log = logging.getLogger(__name__)
