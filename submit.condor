@@ -1,0 +1,17 @@
+log_dir = ./logs/$(project)/$(run)
+
+universe = vanilla
+getenv = True
+executable = ./scripts/run.fish
+arguments = $(project) $(run) $(seed)
+should_transfer_files = NO
+request_cpus = 8
+request_GPUs = 1
+request_memory = 32GB
+max_retries = 0
+requirements = (machine=="gpu01.sscc.uos")
+JobBatchName = "$(project)"
+log = $(log_dir)/condor.log
+output = $(log_dir)/condor.out
+error = $(log_dir)/condor.err
+priority = 1000

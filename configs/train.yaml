@@ -4,7 +4,7 @@
 defaults:
   - _self_
   - trainer: default.yaml
-  - model: default.yaml
+  - model: paper.yaml
   - datamodule: default.yaml
   - loggers: default.yaml
   - hydra: default.yaml
