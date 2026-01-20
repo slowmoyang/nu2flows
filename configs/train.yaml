@@ -6,7 +6,7 @@ defaults:
   - trainer: default.yaml
   - model: default.yaml
   - datamodule: default.yaml
-  - loggers: default.yaml
+  - loggers: csv.yaml
   - hydra: default.yaml
   - paths: default.yaml
   - callbacks: default.yaml
